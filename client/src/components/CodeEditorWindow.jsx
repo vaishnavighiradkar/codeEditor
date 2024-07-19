@@ -16,10 +16,7 @@ const CodeEditorWindow = ({ onChange, language, code, theme, isFullScreen, Fonto
         onChange("code", value);
     };
     return (
-        <div className="overlay mt-1 overflow-hidden w-full h-full shadow-4xl"
-
-
-        >
+        <div className="overlay mt-1 overflow-hidden w-full h-full shadow-4xl">
             <Editor
                 options={Fontoptions}
                 height={"100%"}
