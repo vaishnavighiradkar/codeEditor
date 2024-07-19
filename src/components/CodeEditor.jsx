@@ -5,7 +5,7 @@ import { languageOptions } from "../constants/languageOptions";
 import { snippet } from "../constants/snippet";
 import { classnames } from "../utils/general";
 import './codeEditor.css'
-import { FaExpand, FaCompress, FaRegCopy, FaHome } from 'react-icons/fa';
+import { FaExpand, FaCompress, FaRegCopy } from 'react-icons/fa';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { defineTheme } from "../lib/defineTheme"
@@ -18,7 +18,6 @@ import useKeyPress from '../hooks/useKeyPress';
 import DateDiff from 'date-diff';
 import copy from 'copy-to-clipboard';
 import StopWatch from './StopWatch';
-import { Link } from 'react-router-dom';
 
 
 const defaultCode = `// Type Your code here 1`;
@@ -215,7 +214,7 @@ const CodeEditor = () => {
 
                     setOutputDetails(response.data)
 
-             
+
                     showSuccessToast(`Compiled Successfully!`)
                 })
                 .catch(function (error) {
@@ -503,61 +502,35 @@ const CodeEditor = () => {
             {
                 !fullScreen &&
                 <>
-                    <div className="h-1 w-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 transition duration-200">
+                    <div className="h-1 w-full">
                     </div>
 
-                    <div className="flex flex-row border-2 border-t-0 border-gray-600 gap-4" >
-                        <Link to="/" className='mt-1 ml-2'>
-                            <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center mr-5">
-                                <FaHome fontSize={18} color="black" />
-                            </button>
-                        </Link>
+                    <div className="flex sm:flex-row flex-col  gap-4 my-2" >
+                        <div className='flex flex-row gap-4'>
 
-                        <div className="dropdownInner">
+                        <div className="dropdownInner ml-3">
                             <LanguagesDropdown onSelectChange={onSelectChange} Userlanguage={language} />
                         </div>
-                        <div className="dropdownInner">
+                        <div className="dropdownInner hidden lg:block">
                             <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
                         </div>
-                        {/* <span>fontsize :  {font_size}</span> */}
-                        <div className="px-4 justify-end">
-                            <div className="d-flex px-2 py-1 rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700">
-                                <label htmlFor="fontsize_lable" className="form-label mr-2 text-gray-100">Font Size</label>
-                                <input
-                                    type="number"
-                                    className="form-control px-3 py-1  text-gray-700 bg-white  border border-solid border-gray-300 rounded transition ease-in-out m-0  focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                    id="fontsize_lable"
-                                    placeholder="Font size"
-                                    value={font_size}
-                                    onChange={(e) => set_font_size(parseInt(e.target.value))}
-                                    style={{
-                                        width: "80px"
-                                    }}
-                                />
-                            </div>
+                        <button onClick={copyToClipboard} type="button" id="copytxt" className="flex items-center py-2 px-4 mr-3  text-xs font-medium  rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700">
+                            <FaRegCopy fontSize={18} color="white" />
+                        </button>
+                        <button onClick={makeFullScreen} type="button" className="hidden lg:block flex items-center py-2 px-4 mr-3 text-xs font-medium  rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700">
+                            <FaExpand fontSize={16} color="white" />
+                        </button>
                         </div>
-
-
-
-
-
 
                         <div className="px-4  mx-auto justify-end flex items-center" style={{
                             flex: 1
                         }} >
 
 
-                            <button onClick={copyToClipboard} type="button" id="copytxt" className="flex items-center py-2 px-4 mr-3  text-xs font-medium  rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700">
-                                <FaRegCopy fontSize={18} color="white" />
-                            </button>
-                            <button onClick={makeFullScreen} type="button" className="flex items-center py-2 px-4 mr-3 text-xs font-medium  rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700">
-                                <FaExpand fontSize={16} color="white" />
-                            </button>
-
 
                             <button
                                 disabled={processing || offlineStatus}
-                                onClick={handleCompile} type="button" className="text-white bg-indigo-600 hover:bg-indigo-800   focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
+                                onClick={handleCompile} type="button" className="text-white hover:border font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
 
                                 {
 
@@ -570,20 +543,20 @@ const CodeEditor = () => {
                                             running...
                                         </>
                                         :
-                                        "Run ( F9   ) "
+                                        "Run"
 
                                 }
                             </button>
 
 
-                            <button onClick={downloadTxtFile} type="button" className="text-white bg-indigo-600 hover:bg-indigo-800   focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
-                                {"Save Code ( ctrl+s )"}
+                            <button onClick={downloadTxtFile} type="button" className="text-white   hover:border font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
+                                {"Save Code"}
                             </button>
 
-                            <button onClick={resetCode} type="button" className="text-white bg-indigo-600 hover:bg-indigo-800   focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
-                                {"Erase Code ( ctrl+e )"}
+                            <button onClick={resetCode} type="button" className="text-white   hover:border font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
+                                {"Erase Code"}
                             </button>
-                            <button onClick={handleShare} type="button" className="text-white bg-[#db2777] hover:bg-[#ec4899]   focus:outline-none font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
+                            <button onClick={handleShare} type="button" className="text-white bg-[#db2777] hover:bg-[#ec4899]   focus:outline-none font-medium rounded-lg text-sm px-3 py-1 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
                                 Share
                             </button>
 
@@ -594,11 +567,11 @@ const CodeEditor = () => {
             }
 
 
-            < div className="editorlayout flex flex-row  space-x-4 items-start border-2 border-t-0 border-b-0 border-gray-600"
+            < div className=" flex md:flex-row flex-col  space-x-4  border-2 border-t-0 border-b-0 border-gray-600"
                 style={{
                     height: fullScreen ? "99vh" : `calc(100vh - 6.4vh )`,
                 }}>
-                <div className="flex flex-col h-full justify-start items-end container__left">
+                <div className="flex flex-col h-full  sm:overflow-hidden overflow-auto  justify-start items-end container__left">
                     <CodeEditorWindow
                         code={code}
                         Fontoptions={{
@@ -610,8 +583,7 @@ const CodeEditor = () => {
                         isFullScreen={fullScreen}
                     />
                 </div>
-
-
+               
                 <div className="resizer" id="dragMe">
                     <svg stroke="currentColor" fill="#f1f5f9" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
                     <svg stroke="currentColor" fill="#f1f5f9" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
