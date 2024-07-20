@@ -34,18 +34,23 @@ const CodeEditor = () => {
 
     }
 
+    const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
     const [code, setCode] = useState(defaultCode);
     const [theme, setTheme] = useState("");
     const [customInput, setCustomInput] = useState("");
     const [outputDetails, setOutputDetails] = useState(null);
     const [processing, setProcessing] = useState(null);
     const [fullScreen, setFullScreen] = useState(false);
-    const [font_size, set_font_size] = useState(16)
+    const [font_size, set_font_size] = useState(22)
     const [language, setLanguage] = useState(JSON.parse(localStorage.getItem("language")) || languageOptions[0]);
     const [offlineStatus, SetofflineStatus] = useState(false)
 
 
-
+    useEffect(() => {
+        const handleResize = () => setIsSmallScreen(window.innerWidth <= 1200);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+      }, []);
     function setOffline() {
         SetofflineStatus(true);
     }
@@ -233,24 +238,23 @@ const CodeEditor = () => {
         else {
 
             // console.log("else part ");
-
+            console.log("code: ",code)
             const formData = {
                 language_id: language.id,
                 source_code: btoa(code),
                 stdin: btoa(customInput),
             };
 
-            console.log(process.env.REACT_APP_RAPID_API_HOST)
+            console.log(process.env)
 
             const options = {
                 method: "POST",
                 url: process.env.REACT_APP_RAPID_API_URL,
                 params: { base64_encoded: "true", fields: "*" },
                 headers: {
-                    "content-type": "application/json",
-                    "Content-Type": "application/json",
-                    "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
-                    "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
+                    'x-rapidapi-key': process.env.REACT_APP_RAPID_API_KEY,
+    'x-rapidapi-host': process.env.REACT_APP_RAPID_API_HOST,
+    'Content-Type': 'application/json'
                 },
                 data: formData,
             };
@@ -278,8 +282,8 @@ const CodeEditor = () => {
             url: process.env.REACT_APP_RAPID_API_URL + "/" + token,
             params: { base64_encoded: "true", fields: "*" },
             headers: {
-                "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
-                "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
+                'x-rapidapi-key': process.env.REACT_APP_RAPID_API_KEY,
+    'x-rapidapi-host': process.env.REACT_APP_RAPID_API_HOST
             },
         };
 
@@ -419,7 +423,9 @@ const CodeEditor = () => {
 
     // =======================* Split view *=====================*****==============
     useEffect(() => {
-        const resizer = document.getElementById('dragMe');
+        if(!isSmallScreen)
+        {   
+            const resizer = document.getElementById('dragMe');
         const leftSide = resizer.previousElementSibling;
         const rightSide = resizer.nextElementSibling;
 
@@ -477,7 +483,9 @@ const CodeEditor = () => {
             document.removeEventListener('mousemove', mouseMoveHandler);
             document.removeEventListener('mouseup', mouseUpHandler);
         };
-    })
+        }
+        
+    },[isSmallScreen])
 
 
     const copyToClipboard = () => {
@@ -505,7 +513,7 @@ const CodeEditor = () => {
                     <div className="h-1 w-full">
                     </div>
 
-                    <div className="flex sm:flex-row flex-col  gap-4 my-2" >
+                    <div className="flex sm:flex-row flex-col  gap-4 py-2 pb-4 border-b border-whote" >
                         <div className='flex flex-row gap-4'>
 
                         <div className="dropdownInner ml-3">
@@ -567,11 +575,11 @@ const CodeEditor = () => {
             }
 
 
-            < div className=" flex md:flex-row flex-col  space-x-4  border-2 border-t-0 border-b-0 border-gray-600"
+            < div className="pt-2 flex md:flex-row flex-col  space-x-4  border-2 border-t-0 border-b-0 border-gray-600"
                 style={{
-                    height: fullScreen ? "99vh" : `calc(100vh - 6.4vh )`,
+                    height: fullScreen ? "99vh" : `${!isSmallScreen?`calc(100vh - 6.4vh )`:`120vh`}`,
                 }}>
-                <div className="flex flex-col h-full  sm:overflow-hidden overflow-auto  justify-start items-end container__left">
+                <div className={`flex flex-col h-full  sm:overflow-hidden overflow-auto  justify-start items-end ${!isSmallScreen?`container__left`:``}`}>
                     <CodeEditorWindow
                         code={code}
                         Fontoptions={{
@@ -584,10 +592,10 @@ const CodeEditor = () => {
                     />
                 </div>
                
-                <div className="resizer" id="dragMe">
+                {!isSmallScreen && (<div className="resizer mt-1" id="dragMe">
                     <svg stroke="currentColor" fill="#f1f5f9" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
                     <svg stroke="currentColor" fill="#f1f5f9" strokeWidth="0" viewBox="0 0 24 24" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
-                </div>
+                </div>)}
 
                 <div className="flex  flex-col container__right relative h-full px-1 pt-1"
                     style={{ flex: "1 1 0%" }}>
