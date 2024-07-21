@@ -41,7 +41,7 @@ const CodeEditor = () => {
     const [outputDetails, setOutputDetails] = useState(null);
     const [processing, setProcessing] = useState(null);
     const [fullScreen, setFullScreen] = useState(false);
-    const [font_size, set_font_size] = useState(22)
+    const [font_size, set_font_size] = useState(16)
     const [language, setLanguage] = useState(JSON.parse(localStorage.getItem("language")) || languageOptions[0]);
     const [offlineStatus, SetofflineStatus] = useState(false)
 
