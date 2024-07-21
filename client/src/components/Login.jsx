@@ -17,14 +17,14 @@ const Login = () => {
     e.preventDefault();
     try {
       if (mode === 'login') {
-        const response = await axios.post(`http://localhost:5000/auth/login`, {
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
           userEmail: email,
           password: password,
         });
         localStorage.setItem('token', response.data.token);
         navigate('/'); // Redirect to home page on successful login
       } else {
-        await axios.post('http://localhost:5000/auth/signup', {
+        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/signup`, {
           userEmail: email,
           password: password,
         });
