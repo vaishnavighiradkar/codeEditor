@@ -18,8 +18,9 @@ import useKeyPress from '../hooks/useKeyPress';
 import DateDiff from 'date-diff';
 import copy from 'copy-to-clipboard';
 import StopWatch from './StopWatch';
-
-
+import { useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
+import image from '../utils/profile.jpg'
 const defaultCode = `// Type Your code here 1`;
 const CodeEditor = () => {
 
@@ -44,8 +45,11 @@ const CodeEditor = () => {
     const [font_size, set_font_size] = useState(16)
     const [language, setLanguage] = useState(JSON.parse(localStorage.getItem("language")) || languageOptions[0]);
     const [offlineStatus, SetofflineStatus] = useState(false)
-
-
+    const [dropdownOpen, setDropdownOpen]=useState(false)
+    const dropdownRef = useRef(null);
+  
+    const token = localStorage.getItem('token');
+  const navigate =useNavigate();
     useEffect(() => {
         const handleResize = () => setIsSmallScreen(window.innerWidth <= 1200);
         window.addEventListener("resize", handleResize);
@@ -387,8 +391,6 @@ const CodeEditor = () => {
 
     const handleShare = async () => {
 
-
-
         try {
             await navigator.share({
                 files: [
@@ -407,7 +409,7 @@ const CodeEditor = () => {
                     facebook: true,
                     whatsapp: true,
                     twitter: true,
-                    linkedin: true,
+                    aedin: true,
                     telegram: true,
                     skype: true,
                     pinterest: true,
@@ -419,7 +421,9 @@ const CodeEditor = () => {
             console.error(err);
         }
     };
-
+const handlelogin=()=>{
+    navigate('/login')
+}
 
     // =======================* Split view *=====================*****==============
     useEffect(() => {
@@ -493,6 +497,28 @@ const CodeEditor = () => {
         showSuccessToast('Copied')
     }
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        console.log("token removed")
+        setDropdownOpen(!dropdownOpen)
+        navigate('/');
+      };
+      const toggleDropdown = () => {
+        setDropdownOpen(!dropdownOpen);
+      };
+
+      useEffect(() => {
+        const handleClickOutside = (event) => {
+          if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setDropdownOpen(false);
+          }
+        };
+    console.log("clicked")
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+          document.removeEventListener("mousedown", handleClickOutside);
+        };
+      }, []);
     return (
         <>
             <ToastContainer
@@ -530,7 +556,8 @@ const CodeEditor = () => {
                         </button>
                         </div>
 
-                        <div className="px-4  mx-auto justify-end flex items-center" style={{
+                        <div   ref={dropdownRef}
+                         className="px-4  mx-auto justify-end flex items-center" style={{
                             flex: 1
                         }} >
 
@@ -558,16 +585,38 @@ const CodeEditor = () => {
 
 
                             <button onClick={downloadTxtFile} type="button" className="text-white   hover:border font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
-                                {"Save Code"}
+                                {"Save"}
                             </button>
 
                             <button onClick={resetCode} type="button" className="text-white   hover:border font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
-                                {"Erase Code"}
+                                {"Reset"}
                             </button>
                             <button onClick={handleShare} type="button" className="text-white bg-[#db2777] hover:bg-[#ec4899]   focus:outline-none font-medium rounded-lg text-sm px-3 py-1 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
                                 Share
                             </button>
-
+                            {
+                                token ? (<button onClick={toggleDropdown}> <img src={image} alt='profile' height={30} width={30} /></button>)
+                                :(<button onClick={handlelogin} type="button" className="text-white bg-[#db2777] hover:bg-[#ec4899]   focus:outline-none font-medium rounded-lg text-sm px-3 py-1 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
+                                    Login
+                                </button>)
+                            }
+                            {dropdownOpen && (
+                <div className="absolute flex flex-col z-50 top-10 right-0 mt-2 w-[145px] bg-white rounded-md shadow-md">
+                  <a
+                    href={"/profile"}
+                    className={`  text-[14px] border-b border-bordergray leading-[21px] w-full text-left py-[12px] pl-[22px] `}
+                  >
+                    My Account
+                  </a>
+                  <button
+                    onClick={handleLogout}
+                    className={`  text-[14px] leading-[21px] w-full text-left py-[12px] pl-[22px] `}
+                  >
+                    Log Out
+                  </button>
+                </div>
+              )}
+                           
 
                         </div>
                     </div >
