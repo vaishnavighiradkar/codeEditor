@@ -67,9 +67,9 @@ function authenticateToken(req, res, next) {
 // Save code
 router.post('/savecode', authenticateToken, async (req, res) => {
   try {
-    const { code } = req.body;
+    const { code ,fileName } = req.body;
     const userId = req.user.id;
-    const newCode = new Code({ userId, code });
+    const newCode = new Code({ userId, code, fileName });
     await newCode.save();
     res.status(201).json({ message: 'Code saved successfully' });
   } catch (error) {

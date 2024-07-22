@@ -9,6 +9,10 @@ const codeSchema = new mongoose.Schema({
   code: {
     type: String,
     required: true
+  },
+  fileName: {
+    type: String,
+    required: true
   }
 }, {
   timestamps: true
