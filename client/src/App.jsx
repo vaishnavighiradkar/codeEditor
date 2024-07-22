@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import Login from './components/Login.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Signup from './components/Signup.jsx';
+import Profile from './components/Profile.jsx';
 const App = () => {
   return (
     <>
@@ -26,6 +27,7 @@ const App = () => {
           <Route exact path="/" element={<CodeEditor />} />
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/signup" element={<Signup />} />
+          <Route exact path="/profile" element={<Profile />} />
           {/* <Route exact path="/codeeditor" element={<CodeEditor />} />
           <Route exact path="/jsoneditor" element={<JsonEditor />} /> */}
         </Routes>

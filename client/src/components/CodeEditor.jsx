@@ -46,8 +46,10 @@ const CodeEditor = () => {
     const [language, setLanguage] = useState(JSON.parse(localStorage.getItem("language")) || languageOptions[0]);
     const [offlineStatus, SetofflineStatus] = useState(false)
     const [dropdownOpen, setDropdownOpen]=useState(false)
+    const [filename,setFilename]=useState( `Untitled.${language?.extension}`)
     const dropdownRef = useRef(null);
-  
+    // const defaultName=`Untitled.${language?.extension}`
+
     const token = localStorage.getItem('token');
   const navigate =useNavigate();
     useEffect(() => {
@@ -75,7 +77,10 @@ const CodeEditor = () => {
         }
     }
 
-
+  useEffect(()=>{
+ setFilename(`Untitled.${language?.extension}`)
+ console.log('filename')
+  },[language])
     useEffect(() => {
 
         window.addEventListener('online', setOnline);
@@ -142,6 +147,8 @@ const CodeEditor = () => {
         element.click();
 
     }
+
+    
 
 
     useEffect(() => {
@@ -278,7 +285,29 @@ const CodeEditor = () => {
                 });
 
         }
+        handlesavecode()
     };
+    
+    
+  const handlesavecode = async () => {
+    try {
+      
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/savecode`,  {
+          code: code,
+          fileName: filename,
+          
+        },
+        {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+  console.log(response)
+     
+    } catch (error) {
+      toast.error('Error occurred');
+    }
+  };
 
     const checkStatus = async (token) => {
         const options = {
@@ -602,11 +631,12 @@ const handlelogin=()=>{
                             }
                             {dropdownOpen && (
                 <div className="absolute flex flex-col z-50 top-10 right-0 mt-2 w-[145px] bg-white rounded-md shadow-md">
-                  <a
+                  <a 
+                  
                     href={"/profile"}
                     className={`  text-[14px] border-b border-bordergray leading-[21px] w-full text-left py-[12px] pl-[22px] `}
                   >
-                    My Account
+                    My Profile
                   </a>
                   <button
                     onClick={handleLogout}
@@ -629,6 +659,7 @@ const handlelogin=()=>{
                     height: fullScreen ? "99vh" : `${!isSmallScreen?`calc(100vh - 6.4vh )`:`120vh`}`,
                 }}>
                 <div className={`flex flex-col h-full  sm:overflow-hidden overflow-auto  justify-start items-end ${!isSmallScreen?`container__left`:``}`}>
+                   { token &&( <input value={filename} onChange={(e)=>{setFilename(e.target.value)}} className='py-2 px-4 rounded-md lg:mr-0 mr-12' ></input>)}
                     <CodeEditorWindow
                         code={code}
                         Fontoptions={{
