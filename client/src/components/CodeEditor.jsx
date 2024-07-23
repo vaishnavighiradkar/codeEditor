@@ -5,7 +5,7 @@ import { languageOptions } from "../constants/languageOptions";
 import { snippet } from "../constants/snippet";
 import { classnames } from "../utils/general";
 import './codeEditor.css'
-import { FaExpand, FaCompress, FaRegCopy } from 'react-icons/fa';
+import { FaExpand, FaCompress, FaRegCopy, FaFileDownload } from 'react-icons/fa';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { defineTheme } from "../lib/defineTheme"
@@ -285,29 +285,36 @@ const CodeEditor = () => {
                 });
 
         }
-        handlesavecode()
+        // handlesavecode()
     };
     
     
-  const handlesavecode = async () => {
-    try {
-      
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/savecode`,  {
-          code: code,
-          fileName: filename,
-          
-        },
-        {
-            headers: {
-              'Authorization': `Bearer ${token}`
+    const handlesavecode = async () => {
+        try {
+          const response = await axios.post(
+            `${process.env.REACT_APP_BACKEND_URL}/auth/savecode`,
+            {
+              code: code,
+              fileName: filename,
+            },
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
             }
-          });
-  console.log(response)
-     
-    } catch (error) {
-      toast.error('Error occurred');
-    }
-  };
+          );
+          if (response.status === 201) {
+            window.alert('Code saved successfully');
+          }
+        } catch (error) {
+          if (error.response && error.response.status === 400) {
+            window.alert('File name already exists');
+          } else {
+            window.alert('Error occurred. Please login again');
+          }
+        }
+      };
+      
 
     const checkStatus = async (token) => {
         const options = {
@@ -583,6 +590,10 @@ const handlelogin=()=>{
                         <button onClick={makeFullScreen} type="button" className="hidden lg:block flex items-center py-2 px-4 mr-3 text-xs font-medium  rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700">
                             <FaExpand fontSize={16} color="white" />
                         </button>
+                        <button onClick={downloadTxtFile} type="button" className="hidden lg:block flex items-center py-2 px-4 mr-3 text-xs font-medium  rounded-lg border focus:outline-none hover:bg-gray-700 hover:text-blue-700 focus:z-10  focus:ring-gray-500 bg-gray-800 border-gray-600 hover:text-white hover:bg-gray-700">
+                            <FaFileDownload fontSize={16} color="white" />
+                        </button>
+                        
                         </div>
 
                         <div   ref={dropdownRef}
@@ -613,7 +624,7 @@ const handlelogin=()=>{
                             </button>
 
 
-                            <button onClick={downloadTxtFile} type="button" className="text-white   hover:border font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
+                            <button onClick={handlesavecode} type="button" className="text-white   hover:border font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center focus:ring-[#2557D6]/50 mr-2">
                                 {"Save"}
                             </button>
 

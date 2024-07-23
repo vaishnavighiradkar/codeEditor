@@ -4,8 +4,6 @@ import Editor from "@monaco-editor/react";
 
 
 const CodeEditorWindow = ({ onChange, language, code, theme, isFullScreen, Fontoptions }) => {
-
-
     const [value, setValue] = useState(code || "")
 
     React.useEffect(() => {
@@ -13,7 +11,7 @@ const CodeEditorWindow = ({ onChange, language, code, theme, isFullScreen, Fonto
     }, [code])
     const handleEditorChange = (value) => {
         setValue(value);
-        onChange("code", value);
+        onChange( value);
     };
     return (
         <div className="overlay mt-1 overflow-hidden w-full h-full shadow-4xl">
