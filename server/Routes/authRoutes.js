@@ -67,8 +67,15 @@ function authenticateToken(req, res, next) {
 // Save code
 router.post('/savecode', authenticateToken, async (req, res) => {
   try {
-    const { code ,fileName } = req.body;
+    const { code, fileName } = req.body;
     const userId = req.user.id;
+
+    const existingCode = await Code.findOne({ userId, fileName });
+
+    if (existingCode) {
+      return res.status(400).json({ message: 'File name already exists' });
+    }
+
     const newCode = new Code({ userId, code, fileName });
     await newCode.save();
     res.status(201).json({ message: 'Code saved successfully' });
@@ -87,5 +94,32 @@ router.get('/getcode', authenticateToken, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+router.post('/updatecode', authenticateToken, async (req, res) => {
+  const { fileName, code } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const file = await Code.findOneAndUpdate(
+      { fileName, userId },
+      { code },
+      { new: true }
+    );
+
+    if (!file) {
+      // console.log(`File not found: fileName=${fileName}, userId=${userId}`);
+      return res.status(404).send('File not found');
+    }
+
+    res.status(200).send('Code updated successfully');
+  } catch (error) {
+    console.error('Error updating code:', error);
+    res.status(500).send('Error updating code');
+  }
+});
+
+
+
 
 module.exports = router;
