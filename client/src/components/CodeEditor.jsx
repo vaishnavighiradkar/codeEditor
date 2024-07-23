@@ -345,7 +345,7 @@ const CodeEditor = () => {
             } else {
                 setProcessing(false)
                 setOutputDetails(response.data)
-                showSuccessToast(`Compiled Successfully!`)
+                // showSuccessToast(`Compiled Successfully!`)
                 // console.log('response.data', response.data)
                 return
             }

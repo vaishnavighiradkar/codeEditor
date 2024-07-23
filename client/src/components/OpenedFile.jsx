@@ -47,7 +47,7 @@ const OpenedFile = () => {
         } else {
             setProcessing(false)
             setOutputDetails(response.data)
-            showSuccessToast(`Compiled Successfully!`)
+            // showSuccessToast(`Compiled Successfully!`)
             // console.log('response.data', response.data)
             return
         }
@@ -148,6 +148,7 @@ const showErrorToast = (msg) => {
   return (
     <>
       <div className="flex sm:flex-row flex-col gap-4 py-2 pb-4 border-b border-white">
+        <h1 className='text-white pl-[49px] pt-[11px] text-[16px]' >{fileName}</h1>
         <div className="px-4 mx-auto justify-end flex items-center" style={{ flex: 1 }}>
           <button
             onClick={handleSave}
