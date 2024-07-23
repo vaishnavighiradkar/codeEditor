@@ -575,7 +575,7 @@ const handlelogin=()=>{
                     <div className="h-1 w-full">
                     </div>
 
-                    <div className="flex sm:flex-row flex-col  gap-4 py-2 pb-4 border-b border-whote" >
+                    <div className="flex sm:flex-row flex-col  gap-4 py-2 pb-4 border-b border-white" >
                         <div className='flex flex-row gap-4'>
 
                         <div className="dropdownInner ml-3">
