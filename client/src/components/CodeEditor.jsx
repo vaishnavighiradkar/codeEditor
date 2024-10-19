@@ -28,7 +28,6 @@ const CodeEditor = () => {
     function loadTheme() {
         let th = { label: 'Blackboard', value: 'blackboard', key: 'blackboard' }
         if (localStorage.getItem("usertheme")) {
-            console.log("update theme from local storage");
             th = JSON.parse(localStorage.getItem("usertheme"))
         }
         return th;
@@ -79,7 +78,7 @@ const CodeEditor = () => {
 
   useEffect(()=>{
  setFilename(`Untitled.${language?.extension}`)
- console.log('filename')
+ //console.log('filename')
   },[language])
     useEffect(() => {
 
@@ -96,18 +95,11 @@ const CodeEditor = () => {
 
 
 
-    const onChange = (action, data) => {
-        switch (action) {
-            case "code": {
-                setCode(data);
-                window.localStorage.setItem(language.value, JSON.stringify(data))
-                break;
-            }
-
-            default: {
-                console.warn("case not handled!", action, data);
-            }
-        }
+    const onCodechange = (data) => {
+        
+        setCode(data);
+        window.localStorage.setItem(language.value, JSON.stringify(data))
+       
     };
 
 
@@ -172,12 +164,10 @@ const CodeEditor = () => {
     async function handleThemeChange(th) {
         const theme = th;
 
-        console.log(theme);
         if (["light", "vs-dark"].includes(theme.value)) {
             setTheme(theme);
         } else {
 
-            console.log("calling define theme ");
             defineTheme(theme.value)
                 .then((_) => {
 
@@ -189,74 +179,17 @@ const CodeEditor = () => {
     }
 
     const handleCompile = () => {
+        
         if (processing) return
-        console.log(code)
         setProcessing(true);
-        // if (langMap[language.value]) {
-        if (false) {
-            // console.log("if part ");
-            let lang = language.value
-            if (lang === 'python') {
-                lang = 'py'
-            }
-            // var qs = require('qs');
-            var data = {
-                code: code,
-                language: lang,
-                input: customInput,
-            };
+       
 
-
-
-            var config = {
-                method: "post",
-                url: process.env.REACT_APP_BACKEND_URL,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                data: data,
-            };
-
-
-            axios(config)
-                .then(function (response) {
-
-
-                    setProcessing(false)
-                    var timeDiff = new DateDiff(new Date(), new Date(outputDetails?.timestamp));
-
-                    response.data.time = (timeDiff.seconds() / 1000).toFixed(3).toString();
-
-
-                    setOutputDetails(response.data)
-
-
-                    showSuccessToast(`Compiled Successfully!`)
-                })
-                .catch(function (error) {
-                    if (offlineStatus) {
-                        showErrorToast("Slow or no internet connection");
-                    }
-                    else {
-                        showErrorToast()
-                    }
-                    setProcessing(false)
-                    console.log(error);
-
-
-                });
-        }
-        else {
-
-            // console.log("else part ");
-            console.log("code: ",code)
             const formData = {
                 language_id: language.id,
                 source_code: btoa(code),
                 stdin: btoa(customInput),
             };
 
-            console.log(process.env)
 
             const options = {
                 method: "POST",
@@ -273,7 +206,7 @@ const CodeEditor = () => {
             axios
                 .request(options)
                 .then(function (response) {
-                    // console.log("res.data", response.data);
+                    // //console.log("res.data", response.data);
                     const token = response.data.token;
                     checkStatus(token);
                 })
@@ -284,8 +217,7 @@ const CodeEditor = () => {
 
                 });
 
-        }
-        // handlesavecode()
+        
     };
     
     
@@ -345,12 +277,10 @@ const CodeEditor = () => {
             } else {
                 setProcessing(false)
                 setOutputDetails(response.data)
-                // showSuccessToast(`Compiled Successfully!`)
-                // console.log('response.data', response.data)
+              
                 return
             }
         } catch (err) {
-            console.log("err", err);
             setProcessing(false);
             showErrorToast();
         }
@@ -382,7 +312,6 @@ const CodeEditor = () => {
 
     useEffect(() => {
         if (key_fullScreen) {
-            // console.log("f11 pressed")
             // makeFullScreen()
         }
         //eslint-disable-next-line
@@ -394,10 +323,7 @@ const CodeEditor = () => {
 
     useEffect(() => {
         let th = loadTheme();
-        console.log("calling define theme from useEffect")
-        // defineTheme(th.value).then((_) =>
-        //     setTheme(th)
-        // );
+       
         handleThemeChange(th);
     }, []);
 
@@ -535,7 +461,7 @@ const handlelogin=()=>{
 
     const handleLogout = () => {
         localStorage.removeItem('token');
-        console.log("token removed")
+        //console.log("token removed")
         setDropdownOpen(!dropdownOpen)
         navigate('/');
       };
@@ -549,7 +475,7 @@ const handlelogin=()=>{
             setDropdownOpen(false);
           }
         };
-    console.log("clicked")
+    //console.log("clicked")
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
           document.removeEventListener("mousedown", handleClickOutside);
@@ -676,7 +602,7 @@ const handlelogin=()=>{
                         Fontoptions={{
                             fontSize: font_size
                         }}
-                        onChange={onChange}
+                        onChange={onCodechange}
                         language={language?.value}
                         theme={theme.value}
                         isFullScreen={fullScreen}
